@@ -175,9 +175,11 @@ router.route('/articleList/:classify')
     var classifyId = req.params.classify;
     var articleListData = req.body;
     var articleItemTitle = articleListData.title;
+    var articleItemType = articleListData.type;
     var articleId = uuid.v1().replace(/\-/g,"");
     var articleData = {
       title: articleItemTitle,
+      type: articleItemType,
       articleId: articleId
     };
     //修改附表添加文档名称
@@ -191,6 +193,9 @@ router.route('/articleList/:classify')
 
     function resolve() {
       console.log('---update articleList success!---');
+      var resJson = {
+        articleAddStaric: ''
+      }
       res.json();
     }
 

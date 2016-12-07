@@ -33,7 +33,6 @@ Vue.component('login', {
             console.log(loginStatus);
             if(loginStatus == 'success') {
               Cookie.set('username', this.username);
-              Cookie.set('userId', userId);
               router.push({path: '/'});
             }
           },

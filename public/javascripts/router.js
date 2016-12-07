@@ -73,7 +73,9 @@ const app = new Vue({
     editName: '编辑',
     addingClassify: false,
     classifyAddTitle: '',
-    addingArticle: true
+    addingArticle: true,
+    articleAddTitle: '',
+    articleType: 'type1'
   },
   mounted: function () {
     this.$http.get('http://127.0.0.1:3000/blogData/classify', {}, {emulateJSON: true})
@@ -105,6 +107,7 @@ const app = new Vue({
     //退出登录
     exit: function () {
       Cookie.remove('username');
+      Cookie.remove('userId');
       this.userLogin = false;
     },
     //插入分类
@@ -169,8 +172,33 @@ const app = new Vue({
         )
     },
     // 添加文章名称
-    addArticleTitle: function () {
+    addArticleTitle: function (classify) {
+      var articleAddUrl = "http://127.0.0.1:3000/blogData/articleList" + classify;
+      var articleAddData = {
+        title: this.articleAddTitle,
+        type: this.articleType
+      };
+      this.$http.post(articleAddUrl, articleAddData, {emulateJSON: true})
+        .then(
+          function (res) {
+            var articleAddStatus = res.data;
+            if (articleAddStatus.result == 'success') {
+              this.classifies.push(
+                {
+                  classifyId: articleAddStatus.classifyId,
+                  title: this.classifyAddTitle
+                }
+              );
+              this.addingArticle = false;
 
+            } else {
+              alert('插入分类失败1');
+            }
+          },
+          function (res) {
+            alert('插入分类失败2');
+          }
+        )
     },
     addArticleCancel: function () {
         this.addingArticle = false;

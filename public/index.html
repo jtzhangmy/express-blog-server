@@ -49,25 +49,25 @@
   <div class="home-header-add-article" v-show="addingArticle">
     <h3 class="home-header-add-title">添加文章</h3>
       <div class="home-header-article-title">
-        <input type="text" class="home-header-article-input">
+        <input type="text" class="home-header-article-input" v-model="articleAddTitle">
       </div>
       <div class="home-header-type">
         <span class="home-header-add-title">文章级别</span>
         <label class="radio-inline">
           <span class="home-header-radio-name">1</span>
-          <input type="radio" value="type1" class="home-header-radio" name="type" checked>
+          <input type="radio" value="type1" class="home-header-radio" name="type" v-model="articleType">
         </label>
         <label class="radio-inline">
           <span class="home-header-radio-name">2</span>
-          <input type="radio" value="type2" class="home-header-radio" name="type">
+          <input type="radio" value="type2" class="home-header-radio" name="type" v-model="articleType">
         </label>
         <label class="radio-inline">
           <span class="home-header-radio-name">3</span>
-          <input type="radio" value="type3" class="home-header-radio" name="type">
+          <input type="radio" value="type3" class="home-header-radio" name="type" v-model="articleType">
         </label>
       </div>
       <div class="home-header-add-btn">
-        <a @click="addArticleTitle('undefined')" class="btn btn-primary home-header-btn-add">添加</a>
+        <a @click="addArticleTitle($route.params.classify)" class="btn btn-primary home-header-btn-add">添加</a>
         <a @click="addArticleCancel()" class="btn btn-danger home-header-btn-cancel">取消</a>
       </div>
   </div>
