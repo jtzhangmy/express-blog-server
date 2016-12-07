@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head><title>Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="./lib/css/bootstrap.css">
+  <link rel="styleSheet" href="./lib/css/ionicons.min.css">
+  <link rel="stylesheet" href="./stylesheets/style.css">
+  <script src="./lib/js/jquery.js"></script>
+  <script src="bower_components/vue/dist/vue.js"></script>
+  <script src="bower_components/vue-router/dist/vue-router.js"></script>
+  <script src="bower_components/vue-resource/dist/vue-resource.js"></script>
+  <script src="./lib/js/bootstrap.js"></script>
+</head>
+<body>
+<div id="app">
+  <div class="home-header">
+    <h2 class="home-header-title">博客</h2>
+    <div class="home-header-col">
+
+      <div class="home-header-classify-outer" v-for="classify, index in classifies">
+        <router-link :to="{name:'articleList', params:{classify: classify.classifyId}}" class="home-header-classify home-header-classify-hover">{{classify.title}}</router-link>
+        <span class="home-header-classify-close ion-ios-close-outline" v-if="editing" @click="removeClassify(index, classify.classifyId)"></span>
+      </div>
+
+      <div class="home-header-add col-md-1">
+        <span @click="addClassify()" class="home-header-add-inner ion-ios-plus-outline" v-if="editing"></span>
+      </div>
+    </div>
+    <div class="home-header-operate">
+      <router-link to="/login" class="home-header-login" v-if="!userLogin">登录</router-link>
+      <router-link to="/reg" class="home-header-reg" v-if="!userLogin">注册</router-link>
+      <div class="home-header-exit" v-if="userLogin" @click="exit()">退出</div>
+      <div class="home-header-edit" v-if="userLogin" @click="edit()">{{editName}}</div>
+      <div class="home-header-user" v-if="userLogin">您好:{{username}}</div>
+    </div>
+  </div>
+
+  <router-view></router-view>
+
+  <div class="home-header-add-classify" v-show="addingClassify">
+    <h3 class="home-header-add-title">添加分类</h3>
+    <input class="home-header-input" v-model="classifyAddTitle">
+    <div class="home-header-add-btn">
+      <a @click="addClassifyConfirm()" class="btn btn-primary home-header-btn-add">添加</a>
+      <a @click="addClassifyCancel()" class="btn btn-danger home-header-btn-cancel">取消</a>
+    </div>
+  </div>
+
+  <div class="home-header-add-article" v-show="addingArticle">
+    <h3 class="home-header-add-title">添加文章</h3>
+      <div class="home-header-article-title">
+        <input type="text" class="home-header-article-input">
+      </div>
+      <div class="home-header-type">
+        <span class="home-header-add-title">文章级别</span>
+        <label class="radio-inline">
+          <span class="home-header-radio-name">1</span>
+          <input type="radio" value="type1" class="home-header-radio" name="type" checked>
+        </label>
+        <label class="radio-inline">
+          <span class="home-header-radio-name">2</span>
+          <input type="radio" value="type2" class="home-header-radio" name="type">
+        </label>
+        <label class="radio-inline">
+          <span class="home-header-radio-name">3</span>
+          <input type="radio" value="type3" class="home-header-radio" name="type">
+        </label>
+      </div>
+      <div class="home-header-add-btn">
+        <a @click="addArticleTitle('undefined')" class="btn btn-primary home-header-btn-add">添加</a>
+        <a @click="addArticleCancel()" class="btn btn-danger home-header-btn-cancel">取消</a>
+      </div>
+  </div>
+
+</div>
+
+
+<!--
+<div class="home-aside col-md-2">
+  <h3 class="home-aside-title">目录</h3>
+  &lt;!&ndash;遍历数组目录&ndash;&gt;
+  <a href="/undefined/undefined" class="home-aside-tt">快速入门</a>
+  <a href="/undefined/undefined" class="home-aside-tt">快速入门</a>
+</div>
+<div class="mask"></div>-->
+
+
+
+
+
+<!--<div class="login">
+  <h2 class="login-title success">博客登录</h2>
+  <div onclick="loginExist()" class="login-exist ion-ios-close-empty"></div>
+  <form role="form" method="post" action="/user">
+    <div class="form-group">
+      <label for="username" class="input-label">用户名:</label>
+      <input id="username" type="text" placeholder="请输入用户名" name="username" class="form-control"></div>
+    <div class="form-group">
+      <label for="password" class="input-label">密码:</label>
+      <input id="password" type="password" placeholder="请输入密码" name="password" class="form-control">
+    </div>
+    <div class="btn-row">
+      <a onclick="login()" class="btn btn-success">登录</a>
+      <a href="/reg" class="btn btn-info">注册</a>
+    </div>
+  </form>
+</div>-->
+
+<script src="./javascripts/cookie.js"></script>
+<script src="./javascripts/component/component.js"></script>
+<script src="./javascripts/router.js"></script>
+<!--<script src="./javascripts/index.js"></script>-->
+
+</body>
+</html>

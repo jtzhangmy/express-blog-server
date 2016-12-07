@@ -1,0 +1,406 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+*{
+  margin: 0;
+  padding: 0;
+}
+
+a,a:link,a:hover,a:active,a:visited {
+  text-decoration: none;
+}
+
+/*---------------------------登录页面:/-----------------------------------*/
+.login-content{
+  width: 100%;
+  height: 100%;
+}
+
+.login{
+  overflow: hidden;
+  background: #fff;
+  width: 400px;
+  height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -150px;
+  margin-left: -200px;
+  padding: 15px;
+  z-index: 9002;
+}
+
+.login-exist{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  color: #bbb;
+  text-align: center;
+  line-height: 24px;
+}
+
+.login-exist:before{
+  font-weight: 700;
+}
+
+.login-title{
+  text-align: center;
+}
+
+.input-label{
+  font-size: 16px;
+}
+
+.btn-row{
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn-row .btn{
+  margin: 0 20px;
+}
+
+/*---------------------------注册页面:/reg-----------------------------------*/
+
+.reg-content{
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.reg{
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  height: 440px;
+  position: absolute;
+  top: 50%;
+  margin-top: -220px;
+}
+
+.reg-title{
+  text-align: center;
+}
+
+/*----------------------home页:/home-----------------------------------*/
+.mask{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 9001;
+  top: 0;
+  left: 0;
+  background-color: #000;
+  opacity: 0.3;
+  display: none;
+}
+
+.home-header{
+  height: 50px;
+  width: 100%;
+  background: #259ffe;
+  color: #fff;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 9000;
+}
+
+.home-header-title{
+  margin: 0;
+  padding-left: 30px;
+  height: 50px;
+  line-height: 50px;
+  display: inline-block;
+  width: 16.666666667%;
+  float: left;
+}
+
+.home-header-col{
+  display: inline-block;
+  width: 60%;
+  height: 50px;
+  line-height: 50px;
+  float: left;
+}
+
+.home-header-add{
+  font-size: 24px;
+  cursor: pointer;
+  margin-top: 13px;
+  line-height: 18px;
+  text-align: center;
+  display: inline-block;
+}
+
+.home-header-add-inner{
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.home-header-add-inner:before{
+  font-weight: 700;
+}
+
+.home-header-operate{
+  display: inline-block;
+  width: 20%;
+  height: 50px;
+  line-height: 50px;
+}
+
+.home-header-user{
+  float: left;
+  width: 50%;
+  text-align: center;
+  /*display: none;*/
+}
+
+.home-header-confirm{
+  width: 25%;
+  float: left;
+  cursor: pointer;
+  text-align: center;
+  display: none;
+}
+
+.home-header-exit{
+  width: 25%;
+  float: right;
+  cursor: pointer;
+  text-align: center;
+  /*display: none;*/
+}
+
+.home-header-login{
+  width: 25%;
+  float: right;
+  cursor: pointer;
+  text-align: center;
+  color: #fff;
+}
+
+.home-header-login:visited {
+  color: #fff;
+}
+
+.home-header-reg {
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  width: 25%;
+  float: right;
+  text-align: center;
+}
+
+.home-header-reg:visited {
+  color: #fff;
+}
+
+.home-header-edit{
+  width: 25%;
+  float: right;
+  cursor: pointer;
+  text-align: center;
+}
+
+.home-header-reg:hover{
+  text-decoration: none;
+  color: #fff;
+}
+
+.home-aside{
+  overflow: hidden;
+  padding: 50px 0 0 30px;
+  color: #aaa;
+  border-right: 1px solid #ddd;
+}
+
+.home-aside-lt{
+  display: block;
+  width: 100%;
+  height: 20px;
+  padding-left: 15px;
+  text-decoration: none;
+  cursor: pointer ;
+}
+
+.home-aside-lt:hover{
+  text-decoration: none;
+}
+
+.home-aside-tt{
+  display: block;
+  width: 100%;
+  height: 20px;
+  padding-left: 30px;
+  text-decoration: none;
+  cursor: pointer ;
+}
+
+.home-aside-tt:hover{
+  text-decoration: none;
+}
+
+.home-header-add-classify{
+  width: 300px;
+  height: 220px;
+  position: absolute;
+  z-index: 9002;
+  top: 50%;
+  left: 50%;
+  margin-top: -110px;
+  margin-left: -150px;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 15px;
+  border: 1px solid #ddd;
+}
+
+.home-header-add-article{
+  width: 300px;
+  height: 260px;
+  position: absolute;
+  z-index: 9002;
+  top: 50%;
+  left: 50%;
+  margin-top: -130px;
+  margin-left: -150px;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 15px;
+  border:1px solid #ddd;
+}
+
+.home-header-add-title{
+  text-align: center;
+  color: #259ffe;
+}
+
+.home-header-input{
+  width: 100%;
+  height: 40px;
+  margin-top: 20px;
+  padding: 5px 15px;
+}
+
+.home-header-input-article{
+  width: 100%;
+  height: 40px;
+  margin-top: 20px;
+  padding: 5px 15px;
+}
+
+.home-header-add-btn{
+  text-align: center;
+  margin-top: 20px;
+}
+
+.home-header-btn-add{
+  margin: 10px;
+}
+
+.home-header-btn-cancel{
+  margin: 10px;
+}
+
+.home-header-classify-outer{
+  width: auto;
+  float: left;
+  position: relative;
+  height: 50px;
+}
+
+.home-header-classify{
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  text-align: center;
+  text-decoration: none;
+  padding: 0 20px;
+  height: 50px;
+  display: block;
+  cursor: default;
+}
+
+.home-header-classify:visited {
+  color: #fff;
+}
+
+.home-header-classify-hover{
+  cursor: pointer;
+}
+
+.home-header-classify-hover:hover{
+  color: #fff;
+  text-decoration: none;
+  background-color: #0482ba;
+}
+
+.home-header-classify:link{
+  color: #fff;
+  text-decoration: none;
+}
+
+.home-header-classify-close{
+  position: absolute;
+  z-index: 9005;
+  top: -10px;
+  right: 0;
+  cursor: pointer;
+}
+
+.home-header-type{
+  margin-top: 20px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.home-header-radio-name{
+  float: left;
+}
+
+.radio-inline input{
+  float: left;
+  margin: 3px 0 0 0 !important;
+  position: static;
+}
+
+.home-header-article-title {
+  height: 50px;
+  line-height: 50px;
+}
+
+.home-header-article-input {
+  height: 30px;
+  width: 100%;
+  line-height: 30px;
+  font-size: 18px;
+  padding-left: 5px;
+}
+
+#app {
+  margin-top: 50px;
+}
+
+.remove-leave-active {
+  transition: opacity .5s;
+  opacity: 0;
+}
+
+
+
+
+
+
+
+
+
+
