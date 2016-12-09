@@ -135,8 +135,12 @@ router.route('/classify')
           .then(resolved, reject);
         break;
       case "remove":
+        function removeArticleLists() {
+          ArticleList.remove({classifyId:classifyData.classifyId})
+            .then(resolved, reject);
+        }
         Classify.remove({classifyId:classifyData.classifyId})
-          .then(resolved, reject);
+          .then(removeArticleLists, reject)
         break;
     }
 
