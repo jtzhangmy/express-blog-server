@@ -30,10 +30,11 @@ Vue.component('login', {
           function (res) {
             var loginStatus = res.data.loginStatus;
             var userId = res.data.userId;
-            console.log(loginStatus);
+            console.log(res.data);
             if(loginStatus == 'success') {
               Cookie.set('username', this.username);
               router.push({path: '/'});
+              location.reload();
             }
           },
           function (res) {
@@ -131,21 +132,79 @@ Vue.component('register', {
 
 //文章列表组件
 Vue.component('article-list', {
-  props:['classifyId'],
+  props:['classifyId', 'edit'],
   template: `
     <div class="article-list">
+    <p>{{edit}}</p>
       <div class="home-aside col-md-2">
         <h3 class="home-aside-title">目录</h3>
-        <router-link 
-          v-for="classify in classifies" 
-          :to="{ path: '/classify/' + classifyId + '/' + classify.articleId}" 
-          class="home-aside-tt" >
-          {{classify.title}}
-        </router-link>
+        <div v-for="article in articles" >
+          <router-link 
+          v-if="article.type == 'type1'"
+            :to="{ path: '/classify/' + classifyId + '/' + article.articleId}" 
+            class="home-aside-tt home-aside-t1" >
+            {{article.title}}
+          </router-link>
+          <router-link 
+            v-if="article.type == 'type2'"
+            :to="{ path: '/classify/' + classifyId + '/' + article.articleId}" 
+            class="home-aside-tt home-aside-t2" >
+            {{article.title}}
+          </router-link>
+          <router-link 
+            v-if="article.type == 'type3'"
+            :to="{ path: '/classify/' + classifyId + '/' + article.articleId}" 
+            class="home-aside-tt home-aside-t3" >
+            {{article.title}}
+          </router-link>
+        </div>
+        <div class="home-aside-add-article" v-if="edit">
+          <span class="ion-ios-plus-empty home-aside-add-icon" @click="showAddArticle()"></span>
+        </div>
       </div>
       <router-view></router-view>
+      <!--添加文章-->
+      <div class="home-header-add-article" v-show="addingArticle">
+        <h3 class="home-header-add-title">添加文章</h3>
+          <div class="home-header-article-title">
+            <input type="text" class="home-header-article-input" v-model="articleAddTitle">
+          </div>
+          <div class="home-header-type">
+            <span class="home-header-add-title">文章级别</span>
+            <label class="radio-inline">
+              <span class="home-header-radio-name">1</span>
+              <input type="radio" value="type1" class="home-header-radio" name="type" v-model="articleType">
+            </label>
+            <label class="radio-inline">
+              <span class="home-header-radio-name">2</span>
+              <input type="radio" value="type2" class="home-header-radio" name="type" v-model="articleType">
+            </label>
+            <label class="radio-inline">
+              <span class="home-header-radio-name">3</span>
+              <input type="radio" value="type3" class="home-header-radio" name="type" v-model="articleType">
+            </label>
+          </div>
+          <div class="home-header-add-btn">
+            <a @click="addArticleTitle($route.params.classify)" class="btn btn-primary home-header-btn-add">添加</a>
+            <a @click="addArticleCancel()" class="btn btn-danger home-header-btn-cancel">取消</a>
+          </div>
+      </div>
     </div>
   `,
+  mounted: function () {
+    var articleListUrl = 'http://127.0.0.1:3000/blogData/articleList/' + this.classifyId;
+    this.$http.get(articleListUrl, {}, {emulateJSON: true})
+      .then(
+        function (res) {
+          var classifyData = res.data;
+          this.articles = classifyData[0].articleList;
+          console.log(classifyData[0].articleList)
+        },
+        function (res) {
+          console.error('get classify error');
+        }
+      )
+  },
   watch: {
     //监听路由改变
     classifyId: function () {
@@ -154,7 +213,7 @@ Vue.component('article-list', {
         .then(
           function (res) {
             var classifyData = res.data;
-            this.$data.classifies = classifyData[0].articleList;
+            this.articles = classifyData[0].articleList;
             console.log(classifyData[0].articleList)
           },
           function (res) {
@@ -165,7 +224,51 @@ Vue.component('article-list', {
   },
   data: function () {
     return {
-      classifies: []
+      addingArticle: false,
+      articles: [],
+      articleType: 'type1',
+      articleAddTitle: ''
+    }
+  },
+  methods: {
+    showAddArticle: function () {
+      this.addingArticle = true;
+    },
+    // 添加文章名称
+    addArticleTitle: function (classify) {
+      var articleAddUrl = "http://127.0.0.1:3000/blogData/articleList/" + classify;
+      var articleAddData = {
+        title: this.articleAddTitle,
+        type: this.articleType,
+        classify: classify
+      };
+      this.$http.post(articleAddUrl, articleAddData, {emulateJSON: true})
+        .then(
+          function (res) {
+            var articleAddStatus = res.data;
+            if (articleAddStatus.result == 'success') {
+              console.log(articleAddStatus);
+              this.articles.push(
+                {
+                  articleId: articleAddStatus.articleId,
+                  type: articleAddStatus.articleType,
+                  title: articleAddStatus.articleTitle
+                }
+              );
+              this.addingArticle = false;
+              console.log(this.articles);
+
+            } else {
+              alert('插入分类失败1');
+            }
+          },
+          function (res) {
+            alert('插入分类失败2');
+          }
+        )
+    },
+    addArticleCancel: function () {
+      this.addingArticle = false;
     }
   }
 });

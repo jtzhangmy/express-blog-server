@@ -135,12 +135,12 @@ router.route('/classify')
           .then(resolved, reject);
         break;
       case "remove":
-        function removeArticleLists() {
+        function removeArticleList() {
           ArticleList.remove({classifyId:classifyData.classifyId})
             .then(resolved, reject);
         }
         Classify.remove({classifyId:classifyData.classifyId})
-          .then(removeArticleLists, reject)
+          .then(removeArticleList, reject);
         break;
     }
 
@@ -198,13 +198,20 @@ router.route('/articleList/:classify')
     function resolve() {
       console.log('---update articleList success!---');
       var resJson = {
-        articleAddStaric: ''
-      }
-      res.json();
+        result: 'success',
+        articleTitle: articleItemTitle,
+        articleId: articleId,
+        articleType: articleItemType
+      };
+      res.json(resJson);
     }
 
     function reject() {
       console.log('---update articleList error!---');
+      var resJson = {
+        result: 'error'
+      };
+      res.json(resJson);
     }
   })
   .get(function (req, res, next) {

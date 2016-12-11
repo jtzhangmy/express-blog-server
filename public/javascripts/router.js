@@ -15,7 +15,7 @@ const Login = {
 
 // 文章列表页
 const ArticleList = {
-  template: `<article-list :classifyId="$route.params.classify"></article-list>`
+  template: `<article-list :classifyId="$route.params.classify" :edit="this.editing"></article-list>`
 };
 
 
@@ -69,13 +69,10 @@ const app = new Vue({
     classifies: [],
     userLogin: false,
     username: Cookie.get('username'),
-    editing:false,
+    editing: false,
     editName: '编辑',
     addingClassify: false,
-    classifyAddTitle: '',
-    addingArticle: true,
-    articleAddTitle: '',
-    articleType: 'type1'
+    classifyAddTitle: ''
   },
   mounted: function () {
     this.$http.get('http://127.0.0.1:3000/blogData/classify', {}, {emulateJSON: true})
@@ -170,39 +167,8 @@ const app = new Vue({
             alert('删除分类失败2');
           }
         )
-    },
-    // 添加文章名称
-    addArticleTitle: function (classify) {
-      var articleAddUrl = "http://127.0.0.1:3000/blogData/articleList" + classify;
-      var articleAddData = {
-        title: this.articleAddTitle,
-        type: this.articleType
-      };
-      this.$http.post(articleAddUrl, articleAddData, {emulateJSON: true})
-        .then(
-          function (res) {
-            var articleAddStatus = res.data;
-            if (articleAddStatus.result == 'success') {
-              this.classifies.push(
-                {
-                  classifyId: articleAddStatus.classifyId,
-                  title: this.classifyAddTitle
-                }
-              );
-              this.addingArticle = false;
-
-            } else {
-              alert('插入分类失败1');
-            }
-          },
-          function (res) {
-            alert('插入分类失败2');
-          }
-        )
-    },
-    addArticleCancel: function () {
-        this.addingArticle = false;
     }
+    
   }
 });
 
