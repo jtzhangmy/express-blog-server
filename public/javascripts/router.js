@@ -15,7 +15,7 @@ const Login = {
 
 // 文章列表页
 const ArticleList = {
-  template: `<article-list :classifyId="$route.params.classify" :edit="this.editing"></article-list>`
+  template: `<article-list :classifyId="$route.params.classify" :edit.sync="editing"></article-list>`
 };
 
 
@@ -132,7 +132,7 @@ const app = new Vue({
                 }
               );
               this.addingClassify = false;
-              
+
             } else {
               alert('插入分类失败1');
             }
@@ -168,7 +168,7 @@ const app = new Vue({
           }
         )
     }
-    
+
   }
 });
 

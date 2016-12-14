@@ -192,6 +192,7 @@ Vue.component('article-list', {
     </div>
   `,
   mounted: function () {
+    console.log(typeof this.edit);
     var articleListUrl = 'http://127.0.0.1:3000/blogData/articleList/' + this.classifyId;
     this.$http.get(articleListUrl, {}, {emulateJSON: true})
       .then(
