@@ -4,6 +4,10 @@ var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
+var multer = require('multer');
+var upload = multer({dest: 'uploads/'});
+var fs = require('fs');
+
 var Classify = require('../module/classify');
 var ArticleList = require('../module/articleList');
 var Article = require('../module/article');
@@ -25,11 +29,12 @@ router.route('/userReg')
     var md5 = crypto.createHash('md5'),
       password = md5.update(userInfo.password).digest('hex');
 
+    var userId = uuid.v1().replace(/\-/g,"");
     var _user = new User({
       "username": userInfo.username,
       'password': password,
       'email': userInfo.email,
-      'userId': uuid.v1().replace(/\-/g,"")
+      'userId': userId
     });
 
     var regJson;
@@ -48,6 +53,7 @@ router.route('/userReg')
           //成功
           regJson = {
             reg: 'success',
+            userId: userId
           };
           console.log(regJson);
           return res.json(regJson);
@@ -157,7 +163,8 @@ router.route('/classify')
   })
   .get(function (req, res, next) {
     var classifyData;
-    Classify.find(function (err, classify) {
+    Classify
+      .find(function (err, classify) {
         classifyData = classify;
       })
       .then(resolve, reject);
@@ -178,12 +185,12 @@ router.route('/articleList/:classify')
   .post(function (req, res, next) {
     var classifyId = req.params.classify;
     var articleListData = req.body;
-    var articleItemTitle = articleListData.title;
-    var articleItemType = articleListData.type;
+    var articleTitle = articleListData.title;
+    var articleType = articleListData.type;
     var articleId = uuid.v1().replace(/\-/g,"");
     var articleData = {
-      title: articleItemTitle,
-      type: articleItemType,
+      title: articleTitle,
+      type: articleType,
       articleId: articleId
     };
     //修改附表添加文档名称
@@ -193,15 +200,28 @@ router.route('/articleList/:classify')
         articleList.articleList.push(articleData);
         articleList.save();
       })
-      .then(resolve, reject);
+      .then(saveArticle, reject);
+
+    function saveArticle() {
+      var _article = new Article({
+        articleId: articleId,
+        classifyId: classifyId,
+        title: '',
+        articleCtx: '',
+        readNum: 0,
+        replayList: []
+      });
+      _article.save()
+        .then(resolve, reject);
+    }
 
     function resolve() {
       console.log('---update articleList success!---');
       var resJson = {
         result: 'success',
-        articleTitle: articleItemTitle,
+        articleTitle: articleTitle,
         articleId: articleId,
-        articleType: articleItemType
+        articleType: articleType
       };
       res.json(resJson);
     }
@@ -237,14 +257,42 @@ router.route('/articleList/:classify')
 
 // 文章详情
 router.route('/articleDetail/:articleDetail')
-  .post(function () {
+  .post(function (req, res, next) {
+    var articleId = req.params.articleDetail;
+    var atricleTitle = req.body.title;
+    var articleCtx = req.body.articleCtx;
+    //更新文章
+    Article
+      .update(
+        {articleId: articleId},
+        {$set: {
+          title: atricleTitle,
+          articleCtx: articleCtx
+        }}
+      ).then(resolve, reject);
 
+    function resolve() {
+      console.log('---update article success!---');
+      var articleData = {
+        updateStatus: 'success'
+      };
+      res.json(articleData);
+    }
+
+    function reject() {
+      console.log('---update article error!---');
+      var articleData = {
+        updateStatus: 'error'
+      };
+      res.json(articleData);
+    }
   })
   .get(function (req, res, next) {
-    var articleDetailId = req.params.articleDetail;
+    var articleId = req.params.articleDetail;
 
     var classifyData;
-    Classify.find(function (err, articleDetail) {
+    Classify
+      .find(function (err, articleDetail) {
         articleDetailData = articleDetail;
       })
       .then(resolve, reject);
@@ -256,9 +304,53 @@ router.route('/articleDetail/:articleDetail')
 
     function reject() {
       console.log('---get articleDetail error!---');
+      res.json()
     }
 
   });
+
+// 上传图片
+// router.post('/image', upload.single('image'), function (req, res, next) {
+//   var imgData = req.body.imgData;
+//   console.log(imgData);
+//   console.log('------------------------------------------------')
+//   //过滤data:URL
+//   var base64Data = imgData.replace(/^data:image\/\w+;base64,/, "");
+//   var dataBuffer = new Buffer(base64Data, 'base64');
+//   var file = "public/images/out.png";
+//   fs.exists(file, function(exists) {
+//     if (exists) {
+//       console.log('存在');
+//       fs.unlink(file, function(err){
+//         if(err){
+//           console.log("删除失败！");
+//         }else{
+//           console.log("删除成功！");
+//         }
+//       });
+//     } else {
+//       console.log('不存在');
+//     }
+//   });
+//
+//   setTimeout(function () {
+//     fs.writeFile("public/images/out.png", dataBuffer, function(err) {
+//       if(err){
+//         res.send(err);
+//         console.log(err);
+//         console.log("保存失败!");
+//       }else{
+//         console.log('保存成功!');
+//         res.send("保存成功！");
+//       }
+//     });
+//   }, 1000);
+//   });
+
+router.post('/image', function (req, res, next) {
+  console.log(req.body['imageData[]']);
+  res.send('aaa');
+});
 
 
 

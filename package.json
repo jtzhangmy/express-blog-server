@@ -13,9 +13,12 @@
     "crypto": "0.0.3",
     "debug": "~2.2.0",
     "express": "~4.13.4",
+    "fs": "0.0.1-security",
     "jade": "~1.11.0",
+    "markdown-js": "0.0.3",
     "mongoose": "^4.6.7",
     "morgan": "~1.7.0",
+    "multer": "^1.2.1",
     "node-uuid": "^1.4.7",
     "serve-favicon": "~2.3.0"
   }
