@@ -32,8 +32,10 @@ var articleSchema = new Schema({
   articleId: String,
   classifyId: String,
   title: String,
+  author: String,
   articleCtx: String,
   readNum: Number,
+  createTime: String,
   replayList: [replySchema]
 });
 

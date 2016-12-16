@@ -4,8 +4,6 @@ var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
-var multer = require('multer');
-var upload = multer({dest: 'uploads/'});
 var fs = require('fs');
 
 var Classify = require('../module/classify');
@@ -186,6 +184,7 @@ router.route('/articleList/:classify')
     var classifyId = req.params.classify;
     var articleListData = req.body;
     var articleTitle = articleListData.title;
+    var author = articleListData.author;
     var articleType = articleListData.type;
     var articleId = uuid.v1().replace(/\-/g,"");
     var articleData = {
@@ -203,12 +202,17 @@ router.route('/articleList/:classify')
       .then(saveArticle, reject);
 
     function saveArticle() {
+      var date = new Date();
+      var createTime = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDay();
+      console.log(createTime);
       var _article = new Article({
         articleId: articleId,
         classifyId: classifyId,
         title: '',
+        author: author,
         articleCtx: '',
         readNum: 0,
+        createTime: createTime,
         replayList: []
       });
       _article.save()
@@ -289,17 +293,20 @@ router.route('/articleDetail/:articleDetail')
   })
   .get(function (req, res, next) {
     var articleId = req.params.articleDetail;
-
-    var classifyData;
-    Classify
-      .find(function (err, articleDetail) {
-        articleDetailData = articleDetail;
+    var articleData;
+    Article
+      .find({articleId: articleId})
+      .exec(function (err, article) {
+        articleData = article;
+        console.log(article);
       })
       .then(resolve, reject);
 
     function resolve() {
+      console.log('-------------');
       console.log('---get articleDetail success!---');
-      res.json(articleDetailData);
+      console.log(articleData);
+      res.json(articleData[0]);
     }
 
     function reject() {
@@ -310,46 +317,54 @@ router.route('/articleDetail/:articleDetail')
   });
 
 // 上传图片
-// router.post('/image', upload.single('image'), function (req, res, next) {
-//   var imgData = req.body.imgData;
-//   console.log(imgData);
-//   console.log('------------------------------------------------')
-//   //过滤data:URL
-//   var base64Data = imgData.replace(/^data:image\/\w+;base64,/, "");
-//   var dataBuffer = new Buffer(base64Data, 'base64');
-//   var file = "public/images/out.png";
-//   fs.exists(file, function(exists) {
-//     if (exists) {
-//       console.log('存在');
-//       fs.unlink(file, function(err){
-//         if(err){
-//           console.log("删除失败！");
-//         }else{
-//           console.log("删除成功！");
-//         }
-//       });
-//     } else {
-//       console.log('不存在');
-//     }
-//   });
-//
-//   setTimeout(function () {
-//     fs.writeFile("public/images/out.png", dataBuffer, function(err) {
-//       if(err){
-//         res.send(err);
-//         console.log(err);
-//         console.log("保存失败!");
-//       }else{
-//         console.log('保存成功!');
-//         res.send("保存成功！");
-//       }
-//     });
-//   }, 1000);
-//   });
-
 router.post('/image', function (req, res, next) {
-  console.log(req.body['imageData[]']);
-  res.send('aaa');
+  console.log(req.body.imageData);
+  var imgData = req.body.imageData;
+  //base64转码
+  var base64Data = imgData.replace(/^data:image\/\w+;base64,/, "");
+  var dataBuffer = new Buffer(base64Data, 'base64');
+
+  var date = new Date();
+  var today = date.getFullYear().toString() + (date.getMonth() + 1).toString() + date.getDay().toString();
+  console.log(today);
+
+  //创建目录
+  var publicRoot = "public/";
+  var file = "images/" + today;
+  var publicFile = publicRoot + file;
+  fs.exists(publicFile, function(exists) {
+    if (exists) {
+      console.log('存在');
+
+    } else {
+      console.log('不存在');
+      fs.mkdir(publicFile, function (err) {
+        if (err) {
+          console.log('创建目录失败');
+        } else {
+          console.log('创建目录成功');
+        }
+      })
+    }
+  });
+
+  setTimeout(function () {
+    var imgName = uuid.v1().replace(/\-/g,'') + '.png';
+    fs.writeFile(publicFile + '/' + imgName, dataBuffer, function(err) {
+      if(err){
+        res.json({
+          error: err
+        });
+        console.log(err);
+        console.log("保存失败!");
+      }else{
+        console.log('保存成功!');
+        res.json({
+          imgPath: file + '/' + imgName
+        });
+      }
+    });
+  }, 1000);
 });
 
 
