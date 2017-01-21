@@ -208,7 +208,7 @@ router.route('/articleList/:classify')
       var _article = new Article({
         articleId: articleId,
         classifyId: classifyId,
-        title: '',
+        title: articleTitle,
         author: author,
         articleCtx: '',
         readNum: 0,
@@ -266,13 +266,26 @@ router.route('/articleDetail/:articleDetail')
     var atricleTitle = req.body.title;
     var articleCtx = req.body.articleCtx;
     //更新文章
+    ArticleList //有bug,得传classifyId
+      .update(
+        {articleId: articleId},
+        {
+          $set: {
+            title: atricleTitle
+          }
+        }
+      );
+
+
     Article
       .update(
         {articleId: articleId},
-        {$set: {
-          title: atricleTitle,
-          articleCtx: articleCtx
-        }}
+        {
+          $set: {
+            title: atricleTitle,
+            articleCtx: articleCtx
+          }
+        }
       ).then(resolve, reject);
 
     function resolve() {
@@ -335,7 +348,7 @@ router.post('/image', function (req, res, next) {
   fs.exists(publicFile, function(exists) {
     if (exists) {
       console.log('存在');
-
+      saveImg();
     } else {
       console.log('不存在');
       fs.mkdir(publicFile, function (err) {
@@ -343,12 +356,13 @@ router.post('/image', function (req, res, next) {
           console.log('创建目录失败');
         } else {
           console.log('创建目录成功');
+          saveImg()
         }
       })
     }
   });
 
-  setTimeout(function () {
+  function saveImg() {
     var imgName = uuid.v1().replace(/\-/g,'') + '.png';
     fs.writeFile(publicFile + '/' + imgName, dataBuffer, function(err) {
       if(err){
@@ -364,7 +378,7 @@ router.post('/image', function (req, res, next) {
         });
       }
     });
-  }, 1000);
+  }
 });
 
 
