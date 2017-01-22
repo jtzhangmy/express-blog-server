@@ -5,6 +5,7 @@ mongoose.Promise = require('bluebird');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
 var fs = require('fs');
+var colors = require('colors');
 
 var Classify = require('../module/classify');
 var ArticleList = require('../module/articleList');
@@ -139,9 +140,14 @@ router.route('/classify')
           .then(resolved, reject);
         break;
       case "remove":
+        function removeArticle() {
+          Article.remove({classifyId: classifyData.classifyId})
+            .then(resolved, reject)
+        }
+
         function removeArticleList() {
           ArticleList.remove({classifyId:classifyData.classifyId})
-            .then(resolved, reject);
+            .then(removeArticle, reject);
         }
         Classify.remove({classifyId:classifyData.classifyId})
           .then(removeArticleList, reject);
@@ -149,12 +155,12 @@ router.route('/classify')
     }
 
     function resolved(classifyId) {
-      console.log('---success---');
+      console.log('---success---'.green);
       return res.json({result: "success", classifyId: classifyId});
     }
 
     function reject() {
-      console.log('---error---');
+      console.log('---error---'.red);
       return res.json({result: "error"})
     }
 
@@ -168,12 +174,12 @@ router.route('/classify')
       .then(resolve, reject);
 
     function resolve() {
-      console.log('---get classify success!---');
+      console.log('---get classify success!---'.green);
       res.json(classifyData);
     }
 
     function reject() {
-      console.log('---get classify error!---');
+      console.log('---get classify error!---'.red);
     }
 
   });
@@ -220,7 +226,7 @@ router.route('/articleList/:classify')
     }
 
     function resolve() {
-      console.log('---update articleList success!---');
+      console.log('---update articleList success!---'.green);
       var resJson = {
         result: 'success',
         articleTitle: articleTitle,
@@ -231,7 +237,7 @@ router.route('/articleList/:classify')
     }
 
     function reject() {
-      console.log('---update articleList error!---');
+      console.log('---update articleList error!---'.red);
       var resJson = {
         result: 'error'
       };
@@ -249,12 +255,12 @@ router.route('/articleList/:classify')
       .then(resolve, reject);
 
     function resolve() {
-      console.log('---get articleList success!---');
+      console.log('---get articleList success!---'.green);
       res.json(articleData);
     }
 
     function reject() {
-      console.log('---get articleList error!---');
+      console.log('---get articleList error!---'.red);
     }
     
   });
@@ -263,33 +269,41 @@ router.route('/articleList/:classify')
 router.route('/articleDetail/:articleDetail')
   .post(function (req, res, next) {
     var articleId = req.params.articleDetail;
-    var atricleTitle = req.body.title;
+    var articleTitle = req.body.title;
     var articleCtx = req.body.articleCtx;
+    var classifyId = req.body.classifyId;
     //更新文章
     ArticleList //有bug,得传classifyId
       .update(
-        {articleId: articleId},
+        {
+          classifyId: classifyId,
+          "articleList.articleId": articleId
+        },
         {
           $set: {
-            title: atricleTitle
+            "articleList.$.title": articleTitle
           }
         }
-      );
+      )
+      .then(updateArticle, reject);
 
 
-    Article
-      .update(
-        {articleId: articleId},
-        {
-          $set: {
-            title: atricleTitle,
-            articleCtx: articleCtx
+
+    function updateArticle() {
+      Article
+        .update(
+          {articleId: articleId},
+          {
+            $set: {
+              title: articleTitle,
+              articleCtx: articleCtx
+            }
           }
-        }
-      ).then(resolve, reject);
+        ).then(resolve, reject);
+    }
 
     function resolve() {
-      console.log('---update article success!---');
+      console.log('---update article success!---'.green);
       var articleData = {
         updateStatus: 'success'
       };
@@ -297,7 +311,7 @@ router.route('/articleDetail/:articleDetail')
     }
 
     function reject() {
-      console.log('---update article error!---');
+      console.log('---update article error!---'.red);
       var articleData = {
         updateStatus: 'error'
       };
@@ -317,13 +331,13 @@ router.route('/articleDetail/:articleDetail')
 
     function resolve() {
       console.log('-------------');
-      console.log('---get articleDetail success!---');
+      console.log('---get articleDetail success!---'.green);
       console.log(articleData);
       res.json(articleData[0]);
     }
 
     function reject() {
-      console.log('---get articleDetail error!---');
+      console.log('---get articleDetail error!---'.red);
       res.json()
     }
 
