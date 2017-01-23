@@ -263,7 +263,7 @@ router.route('/articleList/:classify')
       console.log('---get articleList error!---'.red);
     }
     
-  });
+  })
 
 // 文章详情
 router.route('/articleDetail/:articleDetail')
@@ -354,6 +354,46 @@ router.route('/articleDetail/:articleDetail')
       res.json()
     }
 
+  });
+
+router.route('/article/delete')
+  .post(function (req, res, next) {
+    var body = req.body;
+    var classifyId = body.classifyId;
+    var articleId = body.articleId;
+    /*Article.remove(
+      {articleId: articleId}
+    ).then(resolve, reject);*/
+
+    ArticleList.findOne({
+        "classifyId": classifyId,
+        "articleList.articleId": articleId
+      })
+      .exec(function (err, articleList) {
+        // var ArticleItem = articleList.articleList;
+        console.log(articleList.articleList);
+        /*ArticleItem.remove({
+          articleId: articleId
+        })*/
+      })
+      .then(resolve, reject);
+    
+    function resolve() {
+      console.log('remove article success!'.green);
+      var delReqJson = {
+        "deleteStatus": "success"
+      };
+      res.json(delReqJson);
+    }
+    
+    function reject() {
+      var delReqJson = {
+        "deleteStatus": "error"
+      };
+      res.json(delReqJson);
+    }
+
+    
   });
 
 // 上传图片
