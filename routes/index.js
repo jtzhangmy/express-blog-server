@@ -324,16 +324,29 @@ router.route('/articleDetail/:articleDetail')
     Article
       .find({articleId: articleId})
       .exec(function (err, article) {
-        articleData = article;
-        console.log(article);
+        articleData = article[0];
+        articleData.readNum = articleData.readNum +1;
       })
-      .then(resolve, reject);
+      .then(updateReadNum, reject);
+
+    function updateReadNum() {
+      Article
+        .update(
+            {articleId: articleId},
+            {
+              $set: {
+                readNum: articleData.readNum
+              }
+            }
+          )
+        .then(resolve, reject);
+    }
 
     function resolve() {
       console.log('-------------');
       console.log('---get articleDetail success!---'.green);
       console.log(articleData);
-      res.json(articleData[0]);
+      res.json(articleData);
     }
 
     function reject() {
