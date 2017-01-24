@@ -136,7 +136,12 @@ router.route('/classify')
           .then(resolved(classifyId), reject);
         break;
       case "update":
-        Classify.update({classifyId:classifyData.classifyId}, {$set:{title:classifyData.title}})
+        Classify.update(
+          {classifyId:classifyData.classifyId},
+          {$set:{
+            title:classifyData.title
+            }
+          })
           .then(resolved, reject);
         break;
       case "remove":
@@ -361,27 +366,36 @@ router.route('/article/delete')
     var body = req.body;
     var classifyId = body.classifyId;
     var articleId = body.articleId;
-    /*Article.remove(
-      {articleId: articleId}
-    ).then(resolve, reject);*/
+    var removeIndex;
 
     ArticleList.findOne({
         "classifyId": classifyId,
         "articleList.articleId": articleId
       })
       .exec(function (err, articleList) {
-        // var ArticleItem = articleList.articleList;
-        console.log(articleList.articleList);
-        /*ArticleItem.remove({
-          articleId: articleId
-        })*/
+        var ArticleItem = articleList.articleList;
+        for(var i = 0,j = ArticleItem.length; i < j; i ++) {
+          if(ArticleItem[i].articleId == articleId) {
+            removeIndex = i;
+            articleList.articleList.splice(i, 1);
+            articleList.save();
+            break;
+          }
+        }
       })
-      .then(resolve, reject);
+      .then(removeArticle, reject);
+
+    function removeArticle() {
+      Article.remove(
+        {articleId: articleId}
+      ).then(resolve, reject);
+    }
     
     function resolve() {
       console.log('remove article success!'.green);
       var delReqJson = {
-        "deleteStatus": "success"
+        deleteStatus: "success",
+        removeIndex: removeIndex
       };
       res.json(delReqJson);
     }
